@@ -56,34 +56,58 @@ def fill_demo(path_in, path_out, corrected):
     wb = openpyxl.load_workbook(path_in)
     idw = wb['Identification']
     vals = [2025, 'BP Tanger-Tétouan', 'Agence', '4896', 'Agence Al Boughaz', 'Tanger', 'Ce site uniquement', 180, 9,
-            'Locataire', 'Chef d\'agence', '15/01/2026']
+            'Locataire', 0, 410, 'Chef d\'agence', '15/01/2026']
     for i, v in enumerate(vals):
         idw.cell(5 + i, 2, v)
     ws = wb['1-Électricité']
     f = zones(ws)['first']
+    H = headers(ws)
+    K = ['Numéro de compteur ou de police', 'Usage du compteur', 'Mois', 'Quantité (kWh)', 'Montant HT (MAD)', 'Type de contrat', 'Statut', 'Méthode', 'Pièce justificative', 'Commentaire']
+    RS = 'Réseau standard (ONEE ou distributeur)'
     rows = [
-        ['123456', 'Site entier', 'Janvier', 2850, 3420, 'Valeur', 'Mesuré (facture, compteur, pesée)', 'Facture Amendis 01-2025', ''],
-        ['123456', 'Site entier', 'Février', 2610, 3132, 'Valeur', 'Mesuré (facture, compteur, pesée)', 'Facture Amendis 02-2025', ''],
-        ['123456', 'Site entier', 'Mars', 2700, 3240, '', 'Mesuré (facture, compteur, pesée)', 'Facture Amendis 03-2025', ''],
-        ['123456', 'Site entier', 'Avril', '2 480 kWh', '', 'Valeur', 'Mesuré (facture, compteur, pesée)', 'Facture Amendis 04-2025', ''],
-        ['Onduleur PV', 'Production photovoltaïque', 'Année entière', '', '', 'Valeur', '', '', '619 panneaux'],
-        ['', 'Recharge véhicules électriques', 'Année entière', 0, '', 'Néant (aucune activité)', '', '', 'Pas de véhicule électrique'],
+        ['123456', 'Site entier', 'Janvier', 2850, 3420, RS, 'Valeur', 'Mesuré (facture, compteur, pesée)', 'Facture Amendis 01-2025', ''],
+        ['123456', 'Site entier', 'Février', 2610, 3132, RS, 'Valeur', 'Mesuré (facture, compteur, pesée)', 'Facture Amendis 02-2025', ''],
+        ['123456', 'Site entier', 'Mars', 2700, 3240, RS, '', 'Mesuré (facture, compteur, pesée)', 'Facture Amendis 03-2025', ''],
+        ['123456', 'Site entier', 'Avril', '2 480 kWh', '', RS, 'Valeur', 'Mesuré (facture, compteur, pesée)', 'Facture Amendis 04-2025', ''],
+        ['Onduleur PV', 'Production photovoltaïque', 'Année entière', '', '', 'Autoproduction (loi 82-21)', 'Valeur', '', '', '619 panneaux'],
+        ['', 'Recharge véhicules électriques', 'Année entière', 0, '', 'Sans objet', 'Néant (aucune activité)', '', '', 'Pas de véhicule électrique'],
     ]
     if corrected:
-        rows[2][5] = 'Valeur'
+        rows[2][6] = 'Valeur'
         rows[3][3] = 2480
-        rows[4] = ['Onduleur PV', 'Production photovoltaïque', 'Année entière', '', '', 'Néant (aucune activité)', '', '', 'Pas de panneaux solaires sur le site']
+        rows[4] = ['Onduleur PV', 'Production photovoltaïque', 'Année entière', '', '', 'Sans objet', 'Néant (aucune activité)', '', '', 'Pas de panneaux solaires sur le site']
         rows[5][3] = ''
     for i, row in enumerate(rows):
-        for j, v in enumerate(row):
+        for k, v in zip(K, row):
             if v != '':
-                ws.cell(f + i, 2 + j, v)
+                ws.cell(f + i, H[k], v)
     ws2 = wb['2-Carburants et gaz']
-    f2 = zones(ws2)['first']
-    for j, v in enumerate(['Groupe électrogène', None, None, None, None, None, 'Néant (aucune activité)', None, None, 'Pas de groupe électrogène']):
-        if v:
-            ws2.cell(f2, 2 + j, v)
+    f2 = zones(ws2)['first']; H2 = headers(ws2)
+    for k, v in [('Usage', 'Groupe électrogène'), ('Statut', 'Néant (aucune activité)'), ('Commentaire', 'Pas de groupe électrogène')]:
+        ws2.cell(f2, H2[k], v)
     wb.save(path_out)
+
+
+def fill_examples(path_in, path_out):
+    """Recopie les lignes d'exemple de chaque onglet dans sa zone de saisie (démonstration de l'export IFC)."""
+    wb = openpyxl.load_workbook(path_in)
+    fill_ident = [2025, 'BP Tanger-Tétouan', 'Agence', '4896', 'Agence Al Boughaz', 'Tanger', 'Ce site uniquement', 400, 100, 'Locataire', 0, 1200, 'Chef d\'agence', '15/01/2026']
+    for i, v in enumerate(fill_ident):
+        wb['Identification'].cell(5 + i, 2, v)
+    for ws in wb.worksheets:
+        if not ws.title[0].isdigit():
+            continue
+        ex = [r for r in range(1, ws.max_row + 1) if ws.cell(r, 1).value == 'Ex.']
+        f = zones(ws)['first']
+        for k, r in enumerate(ex):
+            for c in range(2, ws.max_column):
+                ws.cell(f + k, c).value = ws.cell(r, c).value
+    wb.save(path_out)
+
+
+def headers(ws):
+    z = zones(ws)
+    return {ws.cell(z['header'], c).value: c for c in range(1, ws.max_column + 1)}
 
 
 # ---------------------------------------------------------------- rendu
@@ -242,7 +266,7 @@ rd = wb0['Lisez-moi']
 secs = {}
 for r in range(1, rd.max_row + 1):
     v = rd.cell(r, 1).value
-    if isinstance(v, str) and v[:2] in ('1.', '2.', '3.', '4.', '5.', '6.'):
+    if isinstance(v, str) and v[:2] in ('1.', '2.', '3.', '4.', '5.', '6.', '7.'):
         secs[v[:1]] = r
 last_rd = rd.max_row
 
@@ -250,12 +274,15 @@ im, g = render(SRC, 'Lisez-moi', f'A1:E{secs["3"] - 2}', 'lisez1', 'E1')
 save(annotate(im, g, zones_left=[(1, 1, 2), (2, secs['1'], secs['2'] - 2), (3, secs['2'], secs['3'] - 2)]), '01_lisez_moi_etapes_regles')
 im, g = render(SRC, 'Lisez-moi', f'A{secs["3"]}:D{secs["5"] - 2}', 'lisez2')
 save(im, '02_lisez_moi_statuts_methodes')
-im, g = render(SRC, 'Lisez-moi', f'A{secs["5"]}:D{last_rd - 2}', 'lisez3')
+im, g = render(SRC, 'Lisez-moi', f'A{secs["5"]}:D{secs["7"] - 2}', 'lisez3')
 save(im, '03_lisez_moi_onglets_couleurs')
+im, g = render(SRC, 'Lisez-moi', f'A{secs["7"]}:D{last_rd - 2}', 'lisez4')
+save(im, '03b_lisez_moi_nouveautes')
 
-im, g = render(SRC, 'Identification', 'A1:D16', 'id_vide', 'D1')
+IDR = wb0['Identification'].max_row
+im, g = render(SRC, 'Identification', f'A1:D{IDR}', 'id_vide', 'D1')
 save(annotate(im, g, cols_top=[(1, 'A'), (2, 'B'), (3, 'C')]), '04_identification_vide')
-im, g = render(DEMO, 'Identification', 'A1:D16', 'id_rempli', 'D1')
+im, g = render(DEMO, 'Identification', f'A1:D{IDR}', 'id_rempli', 'D1')
 save(im, '05_identification_remplie')
 
 ws = wb0['1-Électricité']; z = zones(ws); nc = ws.max_column; LC = L(nc)
@@ -275,21 +302,29 @@ save(annotate(im, g, cells=[(1, LC, f + 2), (2, LC, f + 3), (3, LC, f + 4), (4, 
 im, g = render(DEMO_OK, '1-Électricité', f'A{z["header"]}:{LC}{z["first"] + 6}', 'saisie_ok')
 save(im, '11_electricite_saisie_corrigee')
 im, g = render(DEMO, '1-Électricité', f'A{z["header"]}:{LC}{z["first"] + 9}', 'dd')
-im = dropdown(im, g, 'C', f + 1, ['Site entier', 'Partie du site', 'Salle informatique (sous-compteur)', 'Partagé avec un tiers', 'Recharge véhicules électriques', 'Production photovoltaïque'], 'Site entier')
+im = dropdown(im, g, L(headers(wb0['1-Électricité'])['Usage du compteur']), f + 1, ['Site entier', 'Partie du site', 'Salle informatique (sous-compteur)', 'Partagé avec un tiers', 'Recharge véhicules électriques', 'Production photovoltaïque'], 'Site entier')
 save(im, '12_liste_deroulante')
 im, g = render(SRC, '1-Électricité', f'A{z["ERREURS"]}:{LC}{z["VOTRE SAISIE"] - 2}', 'err')
 save(im, '13_electricite_erreurs')
 
 for sheet, code in [('2-Carburants et gaz', '20'), ('3-Climatisation', '21'), ('4-Achats', '22'), ('5-Équipements', '23'), ('6-Déchets', '24'),
-                    ('7-Déplacements pro', '25'), ('8-Domicile-travail', '26'), ('9-Transport fonds-courrier', '27')]:
+                    ('7-Déplacements pro', '25'), ('8-Domicile et visiteurs', '26'), ('9-Transport fonds-courrier', '27')]:
     ws = wb0[sheet]; z = zones(ws); LC = L(ws.max_column)
     im, g = render(SRC, sheet, f'A{z["COMMENT REMPLIR"]}:{LC}{z["VOTRE SAISIE"] - 2}', 'p' + code)
     save(im, f'{code}_{sheet.split("-", 1)[1].lower().replace(" ", "_").replace("é", "e").replace("è", "e")}')
     im, g = render(SRC, sheet, f'A{z["header"]}:{LC}{z["header"] + 1}', 'h' + code)
     save(im, f'{code}b_colonnes')
 
-im, g = render(DEMO, 'Contrôle', 'A1:F17', 'ctl', 'F1')
+ctw = wb0['Contrôle']
+coh = [r for r in range(1, ctw.max_row + 1) if isinstance(ctw.cell(r, 1).value, str) and ctw.cell(r, 1).value.startswith('CONTRÔLES DE COHÉRENCE')][0]
+im, g = render(DEMO, 'Contrôle', f'A1:F{coh - 2}', 'ctl', 'F1')
 save(im, '30_controle_alertes')
-im, g = render(DEMO_OK, 'Contrôle', 'A1:F17', 'ctlok', 'F1')
+im, g = render(DEMO_OK, 'Contrôle', f'A1:F{coh - 2}', 'ctlok', 'F1')
 save(im, '31_controle_pret')
+im, g = render(DEMO_OK, 'Contrôle', f'A{coh}:E{ctw.max_row}', 'coh')
+save(im, '32_controle_coherence')
+DEMO_EX = os.path.join(OUT, 'demo_exemples.xlsx')
+fill_examples(SRC, DEMO_EX)
+im, g = render(DEMO_EX, 'Export IFC', 'A1:I44', 'exp', 'I1')
+save(im, '33_export_ifc')
 shutil.rmtree(tmpd, ignore_errors=True)

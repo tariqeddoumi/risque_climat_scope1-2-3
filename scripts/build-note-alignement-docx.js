@@ -75,7 +75,7 @@ add(
   centered('Écarts constatés, différences assumées et propositions pour une version 2 du canevas', { italics: true, size: 22, color: C.text }, { after: 300 }),
   new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 400 }, children: [new ImageRun({ type: 'png', data: BAND, transformation: { width: 620, height: 45 }, altText: { title: 'Bandeau', description: 'Bandeau décoratif Groupe BCP', name: 'bandeau' } })] }),
   centered('Destinataires : Direction des Risques, RSE, équipe Empreinte carbone', { size: 20, color: C.text }, { after: 40 }),
-  centered('Version 1.0 — novembre 2026', { size: 20, color: C.text }, { after: 40 }),
+  centered('Version 1.1 — novembre 2026 (améliorations mises en œuvre dans le canevas 2.0)', { size: 20, color: C.text }, { after: 40 }),
   centered('Classification : usage interne', { size: 20, italics: true, color: C.muted }, { after: 360 }),
   new Paragraph({ indent: { left: 360, right: 360 }, shading: { type: ShadingType.CLEAR, fill: C.light }, spacing: { after: 160 },
     children: runs('Base de comparaison : canevas IFC « Carbon Footprint Data Request » (versions 231015, 231027 et 231108, onglets « Périmètre-fonction », « Sources données » et onglets par type de site) et canevas de collecte commenté (version novembre 2026).', { italics: true, size: 19, color: C.brun }) }),
@@ -216,6 +216,7 @@ add(H1('5. Comparaison avec les pratiques des banques'),
 
 // ------------------------------------------------------------------ 6. Version 2
 add(H1('6. Propositions d\'amélioration : canevas version 2'),
+  ...box('Mise en œuvre', ['Les **20 améliorations** ci-dessous sont intégrées dans le **canevas version 2.0** (novembre 2026), avec l\'onglet « Export IFC ». Le guide utilisateur a été mis à jour en conséquence.'], 'ok'),
   P('Les améliorations ci-dessous restent dans le cadre de la méthodologie IFC : elles ajoutent des données ou des contrôles sans retirer aucune rubrique IFC. Elles sont classées par priorité.'),
   ...T(['N°', 'Amélioration', 'Onglet', 'Origine', 'Priorité', 'Effort'], [
     ['1', 'Lignes « Visiteurs et clients » : mode, nombre de personnes, km moyen par personne', '8 (renommé « Domicile-travail et visiteurs »)', 'IFC', 'Haute', 'Faible'],

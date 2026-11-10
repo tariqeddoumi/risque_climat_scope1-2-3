@@ -24,7 +24,7 @@ let W = 9600; // largeur utile courante (portrait 9600, paysage 14538)
 let FIGW = 640;
 const PORTRAIT = { w: 11906, h: 16838, W: 9600, FIGW: 640 };
 const LANDSCAPE = { w: 16838, h: 11906, W: 14538, FIGW: 960 };
-const VERSION = 'Version 1.0 — novembre 2026';
+const VERSION = 'Version 2.0 — novembre 2026 (canevas version 2.0)';
 
 // ------------------------------------------------------------------ helpers
 function runs(text, o = {}) {
@@ -160,7 +160,7 @@ add(H1('2. Avant de commencer'),
     ['5-Équipements', 'Inventaire du matériel avec date d\'installation ; liste des GAB', 'Support SI, PCA, registre des immobilisations'],
     ['6-Déchets', 'Bordereaux du prestataire de collecte ; certificats de destruction', 'Patrimoine, prestataire'],
     ['7-Déplacements pro', 'Extraction de l\'agence de voyage ; notes de frais ; indemnités kilométriques', 'RH, agence de voyage'],
-    ['8-Domicile-travail', 'Résultats de l\'enquête mobilité', 'RH'],
+    ['8-Domicile et visiteurs', 'Résultats de l\'enquête mobilité ; fréquentation du site ou registre des visiteurs', 'RH, gestionnaire de site'],
     ['9-Transport fonds-courrier', 'États mensuels du transporteur de fonds ; factures postales', 'Achats, Sécurité, Patrimoine'],
   ], [1.2, 2.2, 1.8], { firstBold: true }),
   ...box('Vous n\'avez pas tout ? Ce n\'est pas bloquant', [
@@ -171,7 +171,7 @@ add(H1('2. Avant de commencer'),
 // ------------------------------------------------------------------ 3. Découvrir
 add(H1('3. Découvrir le canevas'),
   H2('3.1 Les onglets et le code couleur'),
-  P('Le classeur compte 13 onglets. Les onglets verts d\'accueil (Lisez-moi, Identification), les neuf onglets de saisie numérotés de 1 à 9, l\'onglet Contrôle (rouge) et l\'onglet Listes (gris). Le bas de l\'onglet Lisez-moi les récapitule, avec le code couleur des cellules :'),
+  P('Le classeur compte 14 onglets : les onglets verts d\'accueil (Lisez-moi, Identification), les neuf onglets de saisie numérotés de 1 à 9, l\'onglet Contrôle (rouge), l\'onglet Export IFC (vert) et l\'onglet Listes (gris). Le bas de l\'onglet Lisez-moi les récapitule, avec le code couleur des cellules :'),
   ...fig('03_lisez_moi_onglets_couleurs', 'Onglet Lisez-moi : liste des onglets et code couleur'),
   ...T(['Couleur', 'Signification', 'Que faire'], [
     ['Orangé clair (texte bleu)', 'Cellule à remplir', 'Saisir ou choisir dans la liste'],
@@ -182,6 +182,7 @@ add(H1('3. Découvrir le canevas'),
   ], [1.3, 1.6, 1.8], { firstBold: true }),
   H2('3.2 L\'onglet Lisez-moi'),
   P('C\'est le mode d\'emploi intégré au fichier. Il se lit en deux minutes et résume l\'essentiel de ce guide.'),
+  ...fig('03b_lisez_moi_nouveautes', 'Onglet Lisez-moi : les nouveautés de la version 2'),
   ...fig('01_lisez_moi_etapes_regles', 'Onglet Lisez-moi : les 5 étapes et les 6 règles d\'or'),
   ...T(['Repère', 'Zone', 'Ce qu\'il faut retenir'], [
     ['1', 'Bandeau', 'Le canevas recueille des chiffres : aucun calcul d\'émissions n\'est demandé.'],
@@ -227,7 +228,7 @@ add(H(HeadingLevel.HEADING_1, '5. Comprendre un onglet de saisie'),
     ['2', 'Comment remplir', 'La règle de saisie de l\'onglet, en quatre phrases', 'Lire avant de saisir'],
     ['3', 'Cas possibles et exemples', 'Les situations les plus fréquentes, chacune avec une ligne d\'exemple grise', 'Trouver le cas qui ressemble au vôtre et imiter sa ligne'],
     ['4', 'Erreurs à éviter', 'Les erreurs constatées lors de la collecte précédente', 'Lire'],
-    ['5', 'Votre saisie', 'En-têtes, ligne d\'aide bleue sous chaque colonne, puis 40 lignes à remplir', 'Saisir une ligne par cas ; vérifier la dernière colonne'],
+    ['5', 'Votre saisie', 'En-têtes, ligne d\'aide bleue sous chaque colonne, puis 100 lignes à remplir', 'Saisir une ligne par cas ; vérifier la dernière colonne'],
   ], [0.5, 1.1, 2.4, 1.8]),
   H2('5.1 Le bandeau et les consignes'),
   ...fig('07_electricite_bandeau_consignes', 'Bandeau et consignes de l\'onglet 1-Électricité'),
@@ -283,10 +284,13 @@ add(H1('6. Saisir une ligne pas à pas'),
   H2('6.6 Pièce justificative et commentaire'),
   B('**Pièce justificative** : le nom du fichier joint ou la référence du document (« Facture Amendis 01-2025 »). Joignez les pièces à votre envoi.'),
   B('**Commentaire** : tout ce qui aide à comprendre le chiffre : hypothèse (« 48 000 TTC ÷ 1,2 »), écart avec l\'an dernier, période couverte, direction qui détient la donnée.'),
-  H2('6.7 Besoin de plus de 40 lignes ?'),
-  N('Faites un clic droit sur le numéro d\'une ligne orangée **au milieu** de la zone (par exemple la ligne 20 de la zone), puis **Insérer**.', lAdd),
-  N('Sélectionnez la ligne du dessus, copiez-la, puis collez-la sur la nouvelle ligne : les listes et le contrôle sont recopiés. Effacez ensuite les valeurs copiées.', lAdd),
-  N('N\'insérez pas de ligne **après** la dernière ligne orangée : elle ne serait pas comptée dans l\'onglet Contrôle.', lAdd),
+  H2('6.7 La colonne « Code site »'),
+  P('Elle est présente dans tous les onglets de saisie, juste après le numéro de ligne. **Laissez-la vide** si le fichier ne concerne qu\'un site. Remplissez-la seulement si vous répondez pour plusieurs sites dans un même fichier (cas des directions centrales) : indiquez sur chaque ligne le code du site concerné, par exemple 4896.'),
+  H2('6.8 Feuilles protégées et nombre de lignes'),
+  P('Les feuilles sont **protégées** : seules les cellules orangées sont modifiables. Cela évite d\'effacer par erreur une formule de contrôle ou une liste déroulante. Chaque onglet offre **100 lignes** de saisie, ce qui suffit dans la quasi-totalité des cas.'),
+  N('S\'il vous faut davantage de lignes : onglet **Révision › Ôter la protection de la feuille** (aucun mot de passe n\'est demandé).', lAdd),
+  N('Insérez les lignes **au milieu** de la zone orangée (clic droit sur un numéro de ligne › Insérer), puis recopiez la ligne du dessus sur les nouvelles lignes et effacez les valeurs copiées.', lAdd),
+  N('Remettez la protection : **Révision › Protéger la feuille**, sans mot de passe.', lAdd),
 );
 
 // ------------------------------------------------------------------ 7. Contrôle automatique
@@ -317,7 +321,7 @@ add(H1('7. Le contrôle automatique'),
 );
 
 // ------------------------------------------------------------------ 8. Onglet par onglet
-const COMMUNES = new Set(['Statut', 'Méthode', 'Pièce justificative', 'Commentaire', 'Contrôle automatique']);
+const COMMUNES = new Set(['Code site (si plusieurs sites)', 'Statut', 'Méthode', 'Pièce justificative', 'Commentaire', 'Contrôle automatique']);
 const EXTRA = {
   '1-Électricité': {
     pourquoi: 'L\'électricité achetée au réseau est comptée en scope 2. C\'est souvent l\'un des premiers postes d\'émission d\'une banque : agences, data centers et climatisation en consomment beaucoup.',
@@ -326,6 +330,10 @@ const EXTRA = {
       'Si la facture distingue plusieurs tranches ou heures pleines et heures creuses, **additionnez** les kWh.',
       'Facture bimestrielle : saisissez-la sur le mois de fin de période et indiquez la période en commentaire (« facture janvier-février »).',
       'Un compteur qui alimente aussi un locataire ou la salle informatique est signalé dans « Usage du compteur » : cela évite de compter deux fois la même électricité.',
+      '**Type de contrat** : choisissez « Réseau standard » pour une facture ONEE ou distributeur classique. Les contrats d\'électricité renouvelable (loi 13-09) et l\'autoproduction (loi 82-21) permettent de publier un scope 2 plus bas selon les contrats.',
+      'Panneaux solaires : kWh produits dans « Quantité » et puissance des panneaux dans « Puissance installée (kWc) ».',
+      'Data center : déclarez aussi le sous-compteur des équipements informatiques ; il sert à calculer l\'efficacité énergétique (PUE).',
+      'Réseau de chaleur ou de froid : presque toujours « Néant ». La climatisation électrique est déjà dans la facture d\'électricité.',
     ],
   },
   '2-Carburants et gaz': {
@@ -336,6 +344,8 @@ const EXTRA = {
       'Si vous ne connaissez que le montant, donnez aussi le **prix unitaire moyen** : sans lui, les litres ne peuvent pas être recalculés.',
       'Gaz butane : choisissez l\'unité « Bouteille 12 kg » ou « Bouteille 3 kg » et donnez le nombre de bouteilles.',
       'Les véhicules loués avec carburant inclus se déclarent dans 4-Achats (location de véhicules), pas ici.',
+      '**Véhicule électrique** : combustible « Électricité (véhicule électrique) », kilométrage annuel et consommation aux 100 km (en kWh). Les kWh de recharge suffisent s\'ils sont mesurés.',
+      'Flotte : ajoutez le kilométrage annuel en complément des litres ; il sert de contrôle et de repli.',
     ],
   },
   '3-Climatisation': {
@@ -346,6 +356,8 @@ const EXTRA = {
       'Aucune recharge cette année : saisissez 0 avec le statut « Valeur ». C\'est une information utile.',
       'Plusieurs appareils identiques (même type, fluide et année) : une seule ligne, avec leur nombre.',
       'Fluide illisible : choisissez « Inconnu » et joignez une photo de la plaque.',
+      'Climatiseur de véhicule : indiquez la marque et le modèle ; ils permettent d\'estimer la charge si elle n\'est pas connue.',
+      'Appareil démantelé : indiquez le fluide récupéré par le prestataire. Ce fluide n\'est pas émis et vient en déduction.',
     ],
   },
   '4-Achats': {
@@ -353,7 +365,9 @@ const EXTRA = {
     savoir: [
       'Une ligne par **famille d\'achat**, avec le total HT de l\'année. Inutile de détailler les articles (stylos, gommes…).',
       'Montants **hors taxes**. Si vous n\'avez que le TTC, divisez par 1,2 (TVA à 20 %) et indiquez-le en commentaire ; si le taux de TVA est différent, précisez-le.',
-      'Papier : donnez aussi le nombre de rames (ou les tonnes). Restauration : le nombre de repas si vous l\'avez.',
+      'Papier : séparez **papier vierge** et **papier recyclé**, et donnez aussi le nombre de rames (ou les tonnes). Restauration : le nombre de repas si vous l\'avez.',
+      'Agences louées : famille « Loyers et charges locatives », montant HT annuel.',
+      'Travaux : une ligne par matériau (acier, béton, verre…), avec la quantité en kg ou en tonnes et le montant.',
       'Un contrat payé par le siège pour tout le réseau (gardiennage, nettoyage…) est déclaré une seule fois, par la direction qui le paie. Les sites mettent « Non applicable ».',
     ],
   },
@@ -365,6 +379,7 @@ const EXTRA = {
       'Pas de tranche (« plus de 4 ans ») : donnez une année, quitte à l\'estimer avec la méthode « Estimation d\'expert ».',
       'Ne comptez que le matériel **en service au 31/12** sur le site. Le matériel sorti ou stocké au central est déclaré par le SI.',
       'Bâtiment : quantité 1, surface en m², année de construction ou de dernière grosse rénovation.',
+      'Équipement absent de la liste : « Autre équipement (préciser) » et son nom dans « Modèle / référence ».',
     ],
   },
   '6-Déchets': {
@@ -384,15 +399,18 @@ const EXTRA = {
       'Vol avec escale : une ligne par tronçon (Casablanca – Paris, puis Paris – Montréal).',
       'Ville absente de la liste : choisissez « Autre (préciser en commentaire) » et écrivez la ville en commentaire.',
       'Train, voiture, taxi : distance totale en km. Hôtel : nombre de nuitées dans « Nombre de voyages ».',
+      '**Zone** : indiquez toujours Maroc ou International. L\'IFC distingue les vols et les frais selon la zone ; l\'onglet Contrôle signale les vols sans zone.',
+      'Voiture personnelle ou de location : précisez le carburant (diesel, essence, hybride, électrique).',
     ],
   },
-  '8-Domicile-travail': {
-    pourquoi: 'Les trajets quotidiens des employés entre leur domicile et leur lieu de travail représentent un poste important, que la banque peut réduire (navettes, covoiturage, télétravail).',
+  '8-Domicile et visiteurs': {
+    pourquoi: 'Les trajets quotidiens des employés entre leur domicile et leur lieu de travail représentent un poste important, que la banque peut réduire (navettes, covoiturage, télétravail). La venue des clients et visiteurs dans les agences est aussi demandée par la méthodologie IFC.',
     savoir: [
       'Une ligne par **mode de transport**.',
       'La distance demandée est celle d\'un **aller simple** (domicile → bureau) ; le retour est compté par l\'équipe.',
       'Jours de présence : comptez seulement les jours sur site (3 jours si 2 jours de télétravail).',
-      'Le total des employés doit correspondre à l\'effectif indiqué dans l\'onglet Identification.',
+      'Le total des employés doit correspondre à l\'effectif indiqué dans l\'onglet Identification (l\'onglet Contrôle le vérifie).',
+      '**Visiteurs et clients** : catégorie « Visiteurs et clients », une ligne par mode ; dans « Nombre de personnes », le nombre de visites dans l\'année. Une estimation suffit (fréquentation moyenne par jour × jours d\'ouverture), avec la méthode « Estimation d\'expert ».',
     ],
   },
   '9-Transport fonds-courrier': {
@@ -401,11 +419,13 @@ const EXTRA = {
       'Transport de fonds : additionnez les passages des 12 états mensuels du transporteur et donnez la distance aller-retour depuis sa base.',
       'Courrier : nombre d\'envois et poids total si vous les avez ; sinon le montant HT de la facture.',
       'Navette interne : nombre de tournées et distance aller-retour d\'une tournée.',
+      '**Livraisons des fournisseurs (fret amont)** : seulement quand le transport est facturé à part ; nombre de livraisons, distance aller-retour et type de véhicule.',
+      'Type de véhicule et consommation aux 100 km : demandés par l\'IFC pour le transport amont ; la consommation est facultative.',
     ],
   },
 };
 const CAP = { '1-Électricité': null, '2-Carburants et gaz': '20_carburants_et_gaz', '3-Climatisation': '21_climatisation', '4-Achats': '22_achats',
-  '5-Équipements': '23_equipements', '6-Déchets': '24_dechets', '7-Déplacements pro': '25_deplacements_pro', '8-Domicile-travail': '26_domicile-travail',
+  '5-Équipements': '23_equipements', '6-Déchets': '24_dechets', '7-Déplacements pro': '25_deplacements_pro', '8-Domicile et visiteurs': '26_domicile_et_visiteurs',
   '9-Transport fonds-courrier': '27_transport_fonds-courrier' };
 const fmt = v => (typeof v === 'number' ? v.toLocaleString('fr-FR') : String(v));
 add(H1('8. Les onglets un par un'),
@@ -457,7 +477,18 @@ add(H(HeadingLevel.HEADING_1, '9. Vérifier et envoyer le fichier'),
   ...fig('30_controle_alertes', 'Onglet Contrôle : 4 alertes restent à corriger dans l\'onglet Électricité'),
   P('Ici, l\'onglet 1-Électricité compte 6 lignes saisies, dont 2 « OK » et 4 alertes. Retournez dans cet onglet, repérez les lignes dont la dernière colonne n\'affiche pas « OK » et corrigez-les comme expliqué en section 7.'),
   ...fig('31_controle_pret', 'Onglet Contrôle : aucune alerte, le fichier est prêt à être envoyé'),
-  H2('9.2 Liste de vérification avant envoi'),
+  H2('9.2 Les contrôles de cohérence'),
+  P('Sous le bilan, l\'onglet Contrôle affiche six contrôles de cohérence. Ils **ne bloquent pas l\'envoi** : ils signalent une valeur à vérifier, qu\'il faut corriger ou expliquer en commentaire.'),
+  ...fig('32_controle_coherence', 'Contrôles de cohérence de l\'onglet Contrôle'),
+  ...T(['Contrôle', 'Ce qu\'il vérifie', 'Que faire en cas d\'alerte'], [
+    ['12 mois par compteur', 'Le nombre de mois saisis pour les compteurs « Site entier » est un multiple de 12', 'Compléter les mois manquants, ou saisir une ligne « Année entière »'],
+    ['Consommation par m²', 'Les kWh du réseau divisés par la surface du site restent entre 20 et 500 kWh/m² (bornes larges)', 'Vérifier les kWh et la surface ; expliquer un site atypique (data center, agence partagée)'],
+    ['Employés / effectif', 'Le total des employés de l\'onglet 8 est à moins de 10 % de l\'effectif déclaré', 'Compléter les modes manquants ou corriger l\'effectif'],
+    ['Vols sans zone', 'Chaque ligne d\'avion a une zone Maroc ou International', 'Renseigner la zone'],
+    ['Montant sans prix unitaire', 'Une ligne de carburant avec un montant seul a un prix unitaire', 'Saisir le prix moyen du litre ou du kg'],
+    ['Contrat d\'électricité', 'Chaque ligne d\'électricité au statut Valeur a un type de contrat', 'Choisir le type de contrat'],
+  ], [1.3, 2.4, 2.2], { firstBold: true }),
+  H2('9.3 Liste de vérification avant envoi'),
   ...T(['Point à vérifier', 'Où'], [
     ['L\'onglet Identification est complet (« Identification complète : Oui »)', 'Onglet Contrôle'],
     ['L\'état du fichier indique « Prêt à envoyer » (0 alerte)', 'Onglet Contrôle'],
@@ -465,17 +496,29 @@ add(H(HeadingLevel.HEADING_1, '9. Vérifier et envoyer le fichier'),
     ['Les montants sont hors taxes', 'Colonnes de montant'],
     ['Aucune donnée d\'un autre site n\'est incluse sans être signalée', 'Commentaires'],
     ['Un écart de plus de 20 % avec l\'an dernier est expliqué', 'Commentaires'],
+    ['Les contrôles de cohérence sont « OK » ou leurs alertes sont expliquées en commentaire', 'Onglet Contrôle'],
     ['Les pièces justificatives citées sont jointes', 'Colonne Pièce justificative'],
   ], [3.5, 1.5]),
-  H2('9.3 Envoyer'),
+  H2('9.4 Envoyer'),
   N('Vérifiez le nom du fichier : **EC_<exercice>_<code site>_<nom du site>.xlsx**.', lSend),
   N('Regroupez les pièces justificatives dans un dossier compressé portant le même nom (EC_2025_4896_Agence_Al_Boughaz.zip).', lSend),
   N('Envoyez le fichier et le dossier à votre **correspondant BPR** (sites des BPR) ou à l\'**équipe Empreinte carbone** (directions centrales), avant la date indiquée dans le courriel de lancement.', lSend),
   N('Restez disponible : l\'équipe peut revenir vers vous pour une précision. Ses questions porteront le nom de l\'onglet et le numéro de ligne.', lSend),
 );
 
-// ------------------------------------------------------------------ 10. FAQ
-add(H1('10. Questions fréquentes'),
+// ------------------------------------------------------------------ 10. Export IFC
+add(H1('10. L\'onglet Export IFC'),
+  P('La mesure 2022 a été réalisée avec l\'IFC, à partir de son canevas « Carbon Footprint Data Request ». Pour que les années restent comparables, l\'onglet **Export IFC** recompose automatiquement vos saisies selon les rubriques de ce canevas : sources fixes et mobiles, gaz frigorigènes avec la charge et l\'âge, électricité, achats, immobilisations avec l\'âge moyen, déchets en kg par jour, transport amont, domicile-travail avec la distance aller-retour, déplacements professionnels par zone, visiteurs, transport aval.'),
+  ...fig('33_export_ifc', 'Onglet Export IFC (extrait), calculé à partir des lignes saisies'),
+  B('**Vous n\'avez rien à saisir** dans cet onglet, sauf éventuellement le nombre de jours ouvrés par an (250 par défaut), qui sert à exprimer les déchets en kg par jour comme le demande l\'IFC.'),
+  B('Seules les lignes au statut **Valeur** sont prises en compte ; les lignes Néant, Non disponible et Non applicable sont ignorées.'),
+  B('Les conversions sont automatiques : bouteilles de gaz en kg, rames de papier en kg (2,5 kg par rame A4 de 80 g), distance aller en distance aller-retour, année d\'achat en âge, passages × distance en kilométrage annuel.'),
+  B('La colonne « Complément » donne les informations que l\'IFC demande à côté de la quantité : charge et âge des climatiseurs, kilométrage, puissance des panneaux solaires, efficacité du data center, distance moyenne.'),
+  ...box('À quoi sert cet onglet pour vous ?', ['Il permet de **vérifier vos totaux** avant l\'envoi : un total anormal (par exemple des kWh dix fois trop élevés) se repère d\'un coup d\'œil. L\'équipe Empreinte carbone l\'utilise ensuite pour consolider les fichiers de tous les sites.'], 'astuce'),
+);
+
+// ------------------------------------------------------------------ 11. FAQ
+add(H1('11. Questions fréquentes'),
   ...[
     ['Je n\'ai pas l\'information demandée. Que dois-je faire ?', 'Choisissez le statut « Non disponible » et indiquez en commentaire qui pourrait la détenir (« factures chez la Direction du Patrimoine »). Ne laissez pas la ligne vide et ne mettez pas 0.'],
     ['L\'activité n\'existe pas chez nous (pas de groupe électrogène, pas de véhicule).', 'Une ligne avec le statut « Néant (aucune activité) », sans quantité. C\'est une information à part entière.'],
@@ -488,6 +531,8 @@ add(H1('10. Questions fréquentes'),
     ['Le contrôle affiche « OK » : mon chiffre est-il juste ?', 'Le contrôle vérifie la forme de la ligne, pas l\'exactitude du chiffre. Relisez vos chiffres et joignez les pièces.'],
     ['Je réponds pour plusieurs agences. Un fichier ou plusieurs ?', 'De préférence un fichier par site. Si vous répondez pour plusieurs sites dans un même fichier, indiquez-le dans l\'onglet Identification et précisez le code du site en commentaire de chaque ligne.'],
     ['Ma facture d\'électricité est bimestrielle.', 'Saisissez chaque facture sur le mois de fin de période et indiquez la période couverte en commentaire.'],
+    ['Je ne peux pas écrire dans une cellule.', 'Les feuilles sont protégées : seules les cellules orangées sont modifiables. Pour ajouter des lignes au-delà de 100, ôtez la protection (Révision › Ôter la protection de la feuille, sans mot de passe), voir section 6.8.'],
+    ['Comment déclarer les visiteurs de l\'agence ?', 'Dans l\'onglet 8, catégorie « Visiteurs et clients » : une ligne par mode, le nombre de visites dans l\'année et la distance aller moyenne. Une estimation à partir de la fréquentation suffit.'],
     ['À qui poser une question ?', 'À votre correspondant BPR, ou à l\'équipe Empreinte carbone (Direction des Risques), en précisant l\'onglet et le numéro de ligne.'],
   ].flatMap(([q, a]) => [new Paragraph({ children: runs(q, { bold: true, color: C.brun, size: 21 }), spacing: { before: 160, after: 60 }, keepNext: true }), P(a)]),
 );
@@ -538,7 +583,7 @@ const doc = new Document({
       default: new Header({ children: [new Paragraph({ tabStops: [{ type: TabStopType.RIGHT, position: sct.geo.W }],
         border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: C.orange, space: 4 } },
         children: [new ImageRun({ type: 'png', data: LOGO, transformation: { width: 69, height: 36 }, altText: { title: 'Groupe BCP', description: 'Logo', name: 'logo-entete' } }),
-          new TextRun({ text: '\tGuide utilisateur — canevas de collecte de l\'empreinte carbone · Version 1.0', size: 16, color: C.brun, font: FONT })] })] }),
+          new TextRun({ text: '\tGuide utilisateur — canevas de collecte de l\'empreinte carbone · Version 2.0', size: 16, color: C.brun, font: FONT })] })] }),
       first: new Header({ children: [new Paragraph({ children: [] })] }),
     },
     footers: {
