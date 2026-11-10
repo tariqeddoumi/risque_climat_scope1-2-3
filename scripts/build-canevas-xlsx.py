@@ -85,7 +85,7 @@ def merged(ws, r, c1, c2, text, f=None, fl=None, h=None, al=WRAP):
 
 COMMON_TAIL = [
     ('Statut', 22, 'Obligatoire. « Valeur » si vous donnez un chiffre ; sinon Néant, Non disponible ou Non applicable.', 'statut', None),
-    ('Méthode', 26, 'Comment avez-vous obtenu le chiffre ?', 'methode', None),
+    ('Méthode', 34, 'Comment avez-vous obtenu le chiffre ?', 'methode', None),
     ('Pièce justificative', 24, 'Nom du fichier joint ou référence (ex. Facture Lydec 01/2025).', None, None),
     ('Commentaire', 34, 'Hypothèses, explication d\'un écart, nom de la direction qui détient l\'info…', None, None),
 ]
@@ -172,6 +172,8 @@ def poste_sheet(name, title, scope, owner, where, steps, cols, cases, errors, qt
         elif c[4] == 'days':
             dv_num(ws, rng, 'decimal', 0, 7, msg='Nombre de jours par semaine, entre 0 et 7.')
     ws.freeze_panes = None
+    ws.column_dimensions[L(nc + 1)].width = 15
+    for rr in range(first, last + 1): ws.row_dimensions[rr].height = 18
     ws.sheet_view.zoomScale = 90
     ws.print_title_rows = f'{hdr}:{hdr}'
     ws.page_setup.orientation = 'landscape'; ws.page_setup.fitToWidth = 1; ws.page_setup.fitToHeight = 0
@@ -184,7 +186,7 @@ rd = wb.create_sheet('Lisez-moi', 0)
 for col, w in zip('ABCD', [4, 34, 62, 52]): rd.column_dimensions[col].width = w
 r = 1
 merged(rd, r, 1, 4, 'Canevas de collecte : empreinte carbone du Groupe BCP', font(bold=True, size=18, color=WHITE), NAVY, 40, WRAPC); r += 1
-add_logo(rd, 'E1'); rd.sheet_view.showGridLines = False
+add_logo(rd, 'E1'); rd.column_dimensions['E'].width = 15; rd.sheet_view.showGridLines = False
 merged(rd, r, 1, 4, 'Ce fichier sert à recueillir les données nécessaires au calcul des émissions de gaz à effet de serre de votre site ou de votre direction. Vous n\'avez aucun calcul à faire : donnez simplement les chiffres demandés, dans l\'unité demandée.', font(size=11), LBLUE, 36); r += 2
 
 def section(t):
@@ -260,7 +262,7 @@ merged(rd, r, 1, 4, 'Une question ? Écrivez à l\'équipe Empreinte carbone du 
 idw = wb.create_sheet('Identification', 1)
 for col, w in zip('ABC', [36, 40, 70]): idw.column_dimensions[col].width = w
 merged(idw, 1, 1, 3, 'Identification du site ou de la direction', font(bold=True, size=16, color=WHITE), NAVY, 40, WRAPC)
-add_logo(idw, 'D1'); idw.sheet_view.showGridLines = False
+add_logo(idw, 'D1'); idw.column_dimensions['D'].width = 15; idw.sheet_view.showGridLines = False
 merged(idw, 2, 1, 3, 'Remplissez une fois, en haut du fichier. Un fichier = un site (ou une direction centrale qui répond pour plusieurs sites : indiquez-le).', font(), LBLUE, 30)
 for j, h in enumerate(['Information', 'Votre réponse', 'Aide et exemple'], start=1):
     c = idw.cell(row=4, column=j, value=h); c.font = font(bold=True, color=WHITE); c.fill = fill(NAVY); c.border = BOX
@@ -541,7 +543,7 @@ poste_sheet('9-Transport fonds-courrier', '9. Transport de fonds et courrier (sc
 ct = wb.create_sheet('Contrôle')
 for col, w in zip('ABCDE', [30, 44, 16, 16, 16]): ct.column_dimensions[col].width = w
 merged(ct, 1, 1, 5, 'Contrôle avant envoi (se remplit automatiquement)', font(bold=True, size=16, color=WHITE), NAVY, 40, WRAPC)
-add_logo(ct, 'F1'); ct.sheet_view.showGridLines = False
+add_logo(ct, 'F1'); ct.column_dimensions['F'].width = 15; ct.sheet_view.showGridLines = False
 merged(ct, 2, 1, 5, 'Le fichier est prêt quand la colonne « Alertes » vaut 0 sur toutes les lignes. Une alerte se corrige dans l\'onglet concerné (voir la colonne « Contrôle automatique »).', font(), LBLUE, 30)
 for j, h in enumerate(['Onglet', 'Poste', 'Lignes saisies', 'Lignes OK', 'Alertes'], start=1):
     c = ct.cell(row=4, column=j, value=h); c.font = font(bold=True, color=WHITE); c.fill = fill(NAVY); c.border = BOX
